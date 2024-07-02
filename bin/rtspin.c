@@ -15,6 +15,9 @@
 #include "litmus.h"
 #include "common.h"
 
+#define SYS_make_rt_valid 548
+#define SYS_make_rt_invalid 549
+
 const char *usage_msg =
 	"Usage: (1) rtspin OPTIONS WCET PERIOD DURATION\n"
 	"       (2) rtspin -S [INPUT] WCET PERIOD DURATION\n"
@@ -336,7 +339,7 @@ static lt_t choose_inter_arrival_time_ns(
 	return ms2ns(iat_ms);
 }
 
-#define OPTSTR "p:c:wlveo:s:m:q:r:X:L:Q:iRu:U:Bhd:C:S::O::TD:E:A:a:"
+#define OPTSTR "p:c:wlveo:s:m:q:r:X:L:Q:iRu:U:Bhd:C:S::O::TD:E:A:a:V:"
 
 int main(int argc, char** argv)
 {
@@ -402,6 +405,8 @@ int main(int argc, char** argv)
 	const char *lock_namespace = "./rtspin-locks";
 	int protocol = -1;
 	double cs_length = 1; /* millisecond */
+
+        int rt_validity = 1;
 
 	progname = argv[0];
 
@@ -545,6 +550,9 @@ int main(int argc, char** argv)
 			if (!cycles_ms)
 				caliber_ms = 1;
 			break;
+                case 'V':
+                        rt_validity = (*optarg == 'Y') ? 1 : 0;
+                        break;
 		case ':':
 			usage("Argument missing.");
 			break;
@@ -554,6 +562,12 @@ int main(int argc, char** argv)
 			break;
 		}
 	}
+
+        if (rt_validity) {
+            syscall(SYS_make_rt_valid);
+        } else {
+            syscall(SYS_make_rt_invalid);
+        }
 
 	if (nr_of_pages) {
 		page_size = getpagesize();
