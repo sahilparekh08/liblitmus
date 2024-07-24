@@ -153,7 +153,6 @@ int main(int argc, char** argv)
 	}
 
 	if (migrate) {
-                printf("Migrating to CPU %d\n", cluster);
 		ret = be_migrate_to_domain(cluster);
 		if (ret < 0)
 			bail_out("could not migrate to target partition or cluster.");

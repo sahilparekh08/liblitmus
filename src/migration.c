@@ -83,9 +83,7 @@ static int read_mapping(int idx, const char* which, cpu_set_t** set, size_t *sz)
 	   a comma are 8 chars (representing a 32-bit mask). The first <mask> may
 	   have fewer chars. Bits are MSB to LSB, left to right. */
 	snprintf(fname, sizeof(fname), "/proc/litmus/%s/%d", which, idx);
-        printf("fname: %s\n", fname);
 	ret = read_file(fname, &buf, sizeof(buf)-1);
-        printf("ret for read_file in read_mapping: %d\n", ret);
 	if (ret <= 0)
 		goto out;
 
@@ -229,7 +227,6 @@ int be_migrate_thread_to_domain(pid_t tid, int domain)
 	size_t sz;
 
 	ret = read_mapping(domain, "domains", &cpu_set, &sz);
-        printf("ret in be_migrate_thread_to_domain: %d\n", ret);
 	if (ret != 0)
 		return ret;
 
